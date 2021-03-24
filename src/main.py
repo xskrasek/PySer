@@ -3,12 +3,14 @@ import re
 from typing import Dict, List
 import argparse
 
+
 def find_title(input: str) -> str:
     # For documents starting with 4 numbers only.
     input = input.replace("\n", " ")
     iter = re.findall(r"for\s+(.*?)\s+from", input, re.MULTILINE)
 
     return iter[0]
+
 
 def find_eal(input: str) -> List[str]:
     found = re.findall(r"eal ?[0-9]\+?", input, re.IGNORECASE)
@@ -40,6 +42,7 @@ def find_versions(input: str) -> Dict[str, List[str]]:
             versions[i[0]] = result
     return versions
 
+
 def find_bibliography(input: str) -> Dict[str, str]:
     found = re.findall(r"\[.*?\]", input)
     
@@ -51,16 +54,17 @@ def find_bibliography(input: str) -> Dict[str, str]:
 
     return res
 
+
 def generate_json(input: str) -> str:
     return json.dumps(
         {
             "title": find_title(input),
             "versions": find_versions(input),
-            "table_of_content": [],
+            "table_of_contents": [],
             "revisions": [],
             "bibliography": find_bibliography(input),
             "other": [],
-        })
+        }, indent=4, sort_keys=True)
 
 
 def generate_json_files(input_path: str, output_path: str):
