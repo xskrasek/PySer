@@ -53,5 +53,6 @@
   "other" : {
     "cc": "Common Criteria for Information Technology Security Evaluation, version 3.1",
     "cem": "Common Methodology for Information Technology Security Evaluation, Version 3.1 Revision 5"
-  }
+  },
+  "revisions": []
 }

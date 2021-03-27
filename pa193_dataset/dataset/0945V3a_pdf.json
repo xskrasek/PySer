@@ -53,5 +53,6 @@
     "[19]": "CIPURSE Crypto Library, CCL52_SCP_v4 v2.0.0002, CIPURSE V2, Compliant to OSPT Alliance CIPURSE V2 Cryptographic Protocol, User Interface, Revision 1.4, Infineon Technologies AG, 2017-06-16 and CIPURSE Crypto Library, CCLX2xCIP v02.00.0004, CIPURSE V2, Compliant to OSPT Alliance CIPURSE V2 Cryptographic Protocol, User Interface, Revision 1.6, Infineon Technologies AG, 2018-02-02",
     "[20]": "SCL52 Symmetric Cryptogaphic Library for DES / AES, 16-bit Security Controller, User Interface, Version 2.02.010, 2016-12-09, Infineon Technologies AG and SCL52 Symmetric Cryptogaphic Library for DES / AES, 16-bit Security Controller, User Interface, Version 2.04.002, 2018-01-15, Infineon Technologies AG",
     "[21]": "Crypto-Table_IFX_CCI_7h_Step2.5-1, Version 0.4, Infineon Technologies AG"
-  }
+  },
+  "revisions": []
 }
