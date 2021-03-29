@@ -5,22 +5,37 @@ import argparse
 
 
 def find_title(input: str) -> str:
-    # For documents starting with 4 numbers only.
-    input = input.replace("\n", " ")
-    iter = re.findall(r"for\s+(.*?)\s+from", input, re.MULTILINE)
+    input = input[:1000] # Arbitrary limit, title after 1000 characters would be weird.
 
-    return iter[0]
+    # For documents starting with 4 numbers only.
+    iter = re.search(r"for\s\s+(.*?)\s\s+from", input.replace("\n", " "), re.MULTILINE)
+    if iter:
+        return iter.group(1)
+
+    # e.g. NSCIB-CC-217812-CR2
+    iter = re.search(r"Version [0-9]+-[0-9]+\s*(.*)", input, re.MULTILINE)
+    if iter:
+        return iter.group(1)
+
+    # e.g. 1110V3b_pdf
+    iter = re.search(r"\n\n([^\n].+?\n)\n\n", input, re.MULTILINE | re.DOTALL)
+    if iter:
+        return iter.group(1)
+
+    # Last resort.
+    iter = re.search(r"([^\n]+\n)*", input, re.MULTILINE)
+    return iter.group(0)
 
 
 def find_eal(input: str) -> List[str]:
-    found = re.findall(r"eal ?[0-9]\+?", input, re.IGNORECASE)
+    found = re.findall(r"EAL ?[0-9]\+?", input)
 
     return list(set(found))
 
 
 def find_sha(input: str) -> List[str]:
     input = input.replace(" ", "")
-    found = re.findall(r"sha-[0-9]+", input, re.IGNORECASE)
+    found = re.findall(r"SHA-?[0-9]+", input)
 
     return list(set(found))
 
@@ -61,13 +76,14 @@ def find_versions(input: str) -> Dict[str, List[str]]:
 
 
 def find_bibliography(input: str) -> Dict[str, str]:
-    found = re.findall(r"\[.*?\]", input)
-    
+    bib_references_found = re.findall(r"\[.*?\]", input)
+
     res = {}
-    for i in found:
-        found_ = re.findall(rf"{re.escape(i)} +([^\[]*)", input)
-        if found_:
-            res[i] = found_[-1]
+    for i in bib_references_found:
+        bib_definitions_found = re.findall(rf"{re.escape(i)} +([^\[]*)", input)
+        if bib_definitions_found:
+            res[i] = bib_definitions_found[-1]
+            res[i] = res[i].replace("\n", " ")
 
     return res
 
@@ -81,7 +97,7 @@ def generate_json(input: str) -> str:
             "revisions": [],
             "bibliography": find_bibliography(input),
             "other": [],
-        }, indent=4, sort_keys=True)
+        }, indent=4, ensure_ascii=False)
 
 
 def generate_json_files(input_path: str, output_path: str):
