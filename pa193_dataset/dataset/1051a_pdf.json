@@ -61,5 +61,6 @@
         "[23]": "Order Entry Form P61N1M3PVD/E, Version 0.67, 2014-03-19, NXP Semiconductors",
         "[24]": "Order Entry Form P61N1M3PVD-1/E-1, Version 1.1, 2014-08-26, NXP Semiconductors",
         "[25]": "SITE TECHNICAL AUDIT REPORT (STAR) Production Environment (Mask production) Toppan Photomasks Korea Ltd., Korea Icheon, Version 1, 2018-10-22, TÜV Informationstechnik GmbH"
-    }
+    },
+    "revisions": []
 }

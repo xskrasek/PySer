@@ -64,5 +64,6 @@
     "[30]": "P71D320 Crypto Library, Configuration Item List, Evaluation documentation, Version 1.0, 2017-03-07, NXP Semiconductors (confidential document)",
     "[31]": "NXP Secure Smart Card Controller 7021 VA Evaluation Reference List, Version 2.2, 2019-07-17, NXP Semiconductors (confidential document)",
     "[32]": "NXP Secure Smart Card Controller N7021, Common Criteria CIL, Version 0.5, 2017-04-06, NXP Semiconductors (confidential document)"
-  }
+  },
+  "revisions": []
 }
