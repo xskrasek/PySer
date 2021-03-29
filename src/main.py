@@ -32,11 +32,28 @@ def find_des(input: str) -> List[str]:
     return list(set(found))
 
 
+def find_rsa(input: str) -> List[str]:
+    found = re.findall(r"RSA-?[0-9]+", input)
+
+    return list(set(found))
+
+
+def find_ecc(input: str) -> List[str]:
+    found = re.findall(r"ECC", input)
+    found += re.findall(r"ECC\s?[0-9]+", input)
+    for i in range(len(found)):
+        found[i] = found[i].upper()
+
+    return list(set(found))
+
+
 def find_versions(input: str) -> Dict[str, List[str]]:
     versions = {}
     for i in [("eal", find_eal),
               ("sha", find_sha),
-              ("des", find_des)]:
+              ("des", find_des),
+              ("rsa", find_rsa),
+              ("ecc", find_ecc)]:
         result = i[1](input)
         if result:
             versions[i[0]] = result
