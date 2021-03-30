@@ -14,7 +14,8 @@ for ref_file in pa193_dataset/dataset/*.json; do
 done
 
 # results
-printf "$lines" | sort -n
+echo ""
+printf "$lines" | sort -nr
 
 # stats
 sum=0
@@ -27,5 +28,4 @@ for score in $scores; do
     max=$((score > max ? score : max))
 done
 
-echo ""
 echo "total: $sum/5000, min: $min, max: $max"
