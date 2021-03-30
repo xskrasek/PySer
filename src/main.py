@@ -3,8 +3,8 @@ import re
 from typing import Dict, List
 import argparse
 
-
-def find_title(input: str) -> str:
+    
+def find_title_dirty(input: str) -> str:
     input = input[:1000] # Arbitrary limit, title after 1000 characters would be weird.
 
     # For documents starting with 4 numbers only.
@@ -25,6 +25,12 @@ def find_title(input: str) -> str:
     # Last resort.
     iter = re.search(r"([^\n]+\n)*", input, re.MULTILINE)
     return iter.group(0)
+
+
+def find_title(input: str) -> str:
+    title = find_title_dirty(input)
+    title = " ".join(title.split())
+    return title
 
 
 def find_eal(input: str) -> List[str]:
@@ -83,6 +89,7 @@ def find_bibliography(input: str) -> Dict[str, str]:
         bib_definitions_found = re.findall(rf"{re.escape(i)} +([^\[]*)", input)
         if bib_definitions_found:
             res[i] = bib_definitions_found[-1]
+            res[i] = " ".join(res[i].split())
             res[i] = res[i].replace("\n", " ")
 
     return res
