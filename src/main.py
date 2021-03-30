@@ -83,13 +83,13 @@ def find_versions(input: str) -> Dict[str, List[str]]:
 
 
 def find_bibliography(input: str) -> Dict[str, str]:
-    bib_references_found = re.findall(r"\[.*?\]", input)
+    bib_references_found = set(re.findall(r"\[.*?\]", input))
 
     res = {}
     for i in bib_references_found:
         bib_definitions_found = re.findall(rf"{re.escape(i)} +([^\[]*)", input)
         if bib_definitions_found:
-            res[i] = bib_definitions_found[-1]
+            res[i] = bib_definitions_found[-1][:250]
             res[i] = " ".join(res[i].split())
             res[i] = res[i].replace("\n", " ")
 
