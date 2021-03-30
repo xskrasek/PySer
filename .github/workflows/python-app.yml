@@ -4,10 +4,8 @@
 name: PySer
 
 on:
-  push:
-    branches: [ ci ]
-  pull_request:
-    branches: [ ci ]
+  push: ~
+  pull_request: ~
 
 jobs:
   shellcheck:
