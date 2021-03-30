@@ -15,7 +15,7 @@ done
 
 # results
 echo ""
-printf "$lines" | sort -nr
+echo -e "$lines" | sort -nr
 
 # stats
 sum=0
@@ -23,7 +23,7 @@ min=100
 max=0
 
 for score in $scores; do
-    ((sum+=$score))
+    ((sum+=score))
     min=$((score < min ? score : min))
     max=$((score > max ? score : max))
 done
