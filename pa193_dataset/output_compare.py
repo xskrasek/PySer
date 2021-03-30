@@ -149,17 +149,23 @@ def check_bibliography(actual, expected):
 def main():
     actual = load_file(sys.argv[1])
     expected = load_file(sys.argv[2])
+    verbose = len(sys.argv) >= 4 and sys.argv[3] == "-v"
 
     checks = (check_title, check_versions, check_toc, check_revisions, check_bibliography)
-    points = 0
-    for check in checks:
-        points += check(actual, expected)
-
-    print(math.ceil(points))
+    points = [check(actual, expected) for check in checks]
+    
+    print(math.ceil(sum(points)))
+    
+    if verbose:
+        #print(" " + " ".join(["%05.2f" % p for p in points]))
+        print(" ".join(["%3.0f" % p for p in points]))
+        
+        #print("actual: ", json.dumps(actual["title"], indent=4, ensure_ascii=False))
+        #print("expected: ", json.dumps(expected["title"], indent=4, ensure_ascii=False))
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print(f"USAGE: {sys.argv[0]} <reference_json> <output_json>", file=sys.stderr)
+        print(f"USAGE: {sys.argv[0]} <output_json> <reference_json> [-v]", file=sys.stderr)
         sys.exit(1)
 
     main()
