@@ -15,28 +15,21 @@ for ref_file in pa193_dataset/dataset/*.json; do
     partial_scores=$(echo "$out" | tail -n 1)
     scores="$scores $(echo "$score" | head -n 1)"
     lines="$lines\n $score $partial_scores $(basename "$out_file")"
-    #exit 0
 done
 
 # results
 echo ""
-#echo "sum tit   ver   toc   rev   bib  name"
 echo "sum tit ver toc rev bib name"
 echo -e "$lines" | sort -nr
 
-#exit 0
-
-# stats
+# total
 sum=0
 count=0
-min=100
-max=0
 
 for score in $scores; do
     ((sum+=score))
     ((count++))
-    min=$((score < min ? score : min))
-    max=$((score > max ? score : max))
 done
 
-echo "total: $sum/$((count * 100)), min: $min, max: $max"
+possible=$((count * 100))
+echo "total: $sum/$possible"
