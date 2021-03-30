@@ -19,13 +19,15 @@ echo -e "$lines" | sort -nr
 
 # stats
 sum=0
+count=0
 min=100
 max=0
 
 for score in $scores; do
     ((sum+=score))
+    ((count++))
     min=$((score < min ? score : min))
     max=$((score > max ? score : max))
 done
 
-echo "total: $sum/5000, min: $min, max: $max"
+echo "total: $sum/$((count * 100)), min: $min, max: $max"
