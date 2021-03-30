@@ -41,7 +41,7 @@ def find_eal(input: str) -> List[str]:
 
 def find_sha(input: str) -> List[str]:
     input = input.replace(" ", "")
-    found = re.findall(r"SHA-?[0-9]+", input)
+    found = re.findall(r"SHA[- ]?[0-9]+", input)
 
     return list(set(found))
 
@@ -54,14 +54,14 @@ def find_des(input: str) -> List[str]:
 
 
 def find_rsa(input: str) -> List[str]:
-    found = re.findall(r"RSA-?[0-9]+", input)
+    found = re.findall(r"RSA[- ]?[0-9]+", input)
 
     return list(set(found))
 
 
 def find_ecc(input: str) -> List[str]:
     found = re.findall(r"ECC", input)
-    found += re.findall(r"ECC\s?[0-9]+", input)
+    found += re.findall(r"ECC ?[0-9]+", input)
     for i in range(len(found)):
         found[i] = found[i].upper()
 
