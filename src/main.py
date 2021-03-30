@@ -49,6 +49,7 @@ def find_sha(input: str) -> List[str]:
 def find_des(input: str) -> List[str]:
     found = re.findall(r"3des", input, re.IGNORECASE)
     found += re.findall(r"triple-des", input, re.IGNORECASE)
+    found += re.findall(r"tdes", input, re.IGNORECASE)
 
     return list(set(found))
 
