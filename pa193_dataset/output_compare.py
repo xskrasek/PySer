@@ -157,11 +157,8 @@ def main():
     print(math.ceil(sum(points)))
     
     if verbose:
-        #print(" " + " ".join(["%05.2f" % p for p in points]))
         print(" ".join(["%3.0f" % p for p in points]))
         
-        #print("actual: ", json.dumps(actual["title"], indent=4, ensure_ascii=False))
-        #print("expected: ", json.dumps(expected["title"], indent=4, ensure_ascii=False))
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
