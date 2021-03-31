@@ -41,8 +41,8 @@ def find_eal(input: str) -> List[str]:
 
 def find_sha(input: str) -> List[str]:
     input = input.replace(" ", "")
-    found = re.findall(r"SHA[-_ ]?(512|384|256|224|3|2|1)"
-                       r"([-/_ ]?(512|384|256|224|3|2|1))?", input)
+    found = re.findall(r"SHA[-_ ]?(?:512|384|256|224|3|2|1)", input)
+    # found = re.findall(r"SHA[-_ ]?[0-9]+", input)
 
     return list(set(found))
 
@@ -56,7 +56,7 @@ def find_des(input: str) -> List[str]:
 
 
 def find_rsa(input: str) -> List[str]:
-    found = re.findall(r"RSA[- ]?[0-9]+", input)
+    found = re.findall(r"RSA[-_ ]?(?:4096|2048|1024)", input)
 
     return list(set(found))
 
