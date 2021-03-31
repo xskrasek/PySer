@@ -56,7 +56,7 @@ def find_des(input: str) -> List[str]:
 
 
 def find_rsa(input: str) -> List[str]:
-    found = re.findall(r"RSA[-_ ]?(?:4096|2048|1024)", input)
+    found = re.findall(r"RSA[-_ ]?(?:4096|2048|1024)(?:[-/_](?:4096|2048|1024))?", input)
 
     return list(set(found))
 
