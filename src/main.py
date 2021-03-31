@@ -83,7 +83,9 @@ def find_versions(input: str) -> Dict[str, List[str]]:
 
 
 def find_bibliography(input: str) -> Dict[str, str]:
-    bib_references_found = set(re.findall(r"\[.*?\]", input))
+    bib_references_found = set(re.findall(r"\[[0-9]*?\]", input))
+    if len(bib_references_found) == 0:
+        bib_references_found = set(re.findall(r"\[.*?\]", input))
 
     res = {}
     for i in bib_references_found:
