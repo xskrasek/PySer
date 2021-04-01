@@ -41,7 +41,7 @@ def find_eal(input: str) -> List[str]:
 
 def find_sha(input: str) -> List[str]:
     input = input.replace(" ", "")
-    found = re.findall(r"SHA-?[0-9]+", input)
+    found = re.findall(r"SHA[-_ ]?(?:512|384|256|224|3|2|1)(?:[-/_ ](?:512|384|256|224|3|2|1))?", input)
 
     return list(set(found))
 
@@ -49,19 +49,20 @@ def find_sha(input: str) -> List[str]:
 def find_des(input: str) -> List[str]:
     found = re.findall(r"3des", input, re.IGNORECASE)
     found += re.findall(r"triple-des", input, re.IGNORECASE)
+    found += re.findall(r"tdes", input, re.IGNORECASE)
 
     return list(set(found))
 
 
 def find_rsa(input: str) -> List[str]:
-    found = re.findall(r"RSA-?[0-9]+", input)
+    found = re.findall(r"RSA[-_ ]?(?:4096|2048|1024)(?:[-/_](?:4096|2048|1024))?", input)
 
     return list(set(found))
 
 
 def find_ecc(input: str) -> List[str]:
     found = re.findall(r"ECC", input)
-    found += re.findall(r"ECC\s?[0-9]+", input)
+    found += re.findall(r"ECC ?[0-9]+", input)
     for i in range(len(found)):
         found[i] = found[i].upper()
 
@@ -82,13 +83,15 @@ def find_versions(input: str) -> Dict[str, List[str]]:
 
 
 def find_bibliography(input: str) -> Dict[str, str]:
-    bib_references_found = re.findall(r"\[.*?\]", input)
+    bib_references_found = set(re.findall(r"\[[0-9]*-?[0-9]*?\]", input))
+    if len(bib_references_found) < 5:
+        bib_references_found = set(re.findall(r"\[.*?\]", input))
 
     res = {}
     for i in bib_references_found:
         bib_definitions_found = re.findall(rf"{re.escape(i)} +([^\[]*)", input)
         if bib_definitions_found:
-            res[i] = bib_definitions_found[-1]
+            res[i] = bib_definitions_found[-1][:250]
             res[i] = " ".join(res[i].split())
             res[i] = res[i].replace("\n", " ")
 
