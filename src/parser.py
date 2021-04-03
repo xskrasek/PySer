@@ -2,11 +2,18 @@ import json
 import re
 from typing import Dict, List
 
+
+def deduplicate_list(input: List) -> List:
+    return list(set(input))
+
+
 def find_title_dirty(input: str) -> str:
-    input = input[:1000] # Arbitrary limit, title after 1000 characters would be weird.
+    # Arbitrary limit, title after 1000 characters would be weird.
+    input = input[:1000]
 
     # For documents starting with 4 numbers only.
-    iter = re.search(r"for\s\s+(.*?)\s\s+from", input.replace("\n", " "), re.MULTILINE)
+    iter = re.search(r"for\s\s+(.*?)\s\s+from",
+                     input.replace("\n", " "), re.MULTILINE)
     if iter:
         return iter.group(1)
 
@@ -34,14 +41,19 @@ def find_title(input: str) -> str:
 def find_eal(input: str) -> List[str]:
     found = re.findall(r"EAL ?[0-9]\+?", input)
 
-    return list(set(found))
+    return deduplicate_list(found)
 
 
 def find_sha(input: str) -> List[str]:
-    input = input.replace(" ", "")
-    found = re.findall(r"SHA[-_ ]?(?:512|384|256|224|3|2|1)(?:[-/_ ](?:512|384|256|224|3|2|1))?", input)
+    versions = "512|384|256|224|3|2|1"
 
-    return list(set(found))
+    input = input.replace(" ", "")
+    found = re.findall(
+        rf"SHA[-_ ]?(?:{versions})(?:[-/_ ](?:{versions}))?",
+        input
+    )
+
+    return deduplicate_list(found)
 
 
 def find_des(input: str) -> List[str]:
@@ -49,13 +61,18 @@ def find_des(input: str) -> List[str]:
     found += re.findall(r"triple-des", input, re.IGNORECASE)
     found += re.findall(r"tdes", input, re.IGNORECASE)
 
-    return list(set(found))
+    return deduplicate_list(found)
 
 
 def find_rsa(input: str) -> List[str]:
-    found = re.findall(r"RSA[-_ ]?(?:4096|2048|1024)(?:[-/_](?:4096|2048|1024))?", input)
+    versions = "4096|2048|1024"
 
-    return list(set(found))
+    found = re.findall(
+        rf"RSA[-_ ]?(?:{versions})(?:[-/_](?:{versions}))?",
+        input
+    )
+
+    return deduplicate_list(found)
 
 
 def find_ecc(input: str) -> List[str]:
@@ -64,36 +81,36 @@ def find_ecc(input: str) -> List[str]:
     for i in range(len(found)):
         found[i] = found[i].upper()
 
-    return list(set(found))
+    return deduplicate_list(found)
 
 
 def find_versions(input: str) -> Dict[str, List[str]]:
     versions = {}
-    for i in [("eal", find_eal),
-              ("sha", find_sha),
-              ("des", find_des),
-              ("rsa", find_rsa),
-              ("ecc", find_ecc)]:
-        result = i[1](input)
+    for (version_name, parse_function) in [("eal", find_eal),
+                                           ("sha", find_sha),
+                                           ("des", find_des),
+                                           ("rsa", find_rsa),
+                                           ("ecc", find_ecc)]:
+        result = parse_function(input)
         if result:
-            versions[i[0]] = result
+            versions[version_name] = result
     return versions
 
 
 def find_bibliography(input: str) -> Dict[str, str]:
-    bib_references_found = set(re.findall(r"\[[0-9]*-?[0-9]*?\]", input))
-    if len(bib_references_found) < 5:
-        bib_references_found = set(re.findall(r"\[.*?\]", input))
+    references_found = set(re.findall(r"\[[0-9]*-?[0-9]*?\]", input))
+    if len(references_found) < 5:
+        references_found = set(re.findall(r"\[.*?\]", input))
 
-    res = {}
-    for i in bib_references_found:
-        bib_definitions_found = re.findall(rf"{re.escape(i)} +([^\[]*)", input)
-        if bib_definitions_found:
-            res[i] = bib_definitions_found[-1][:250]
-            res[i] = " ".join(res[i].split())
-            res[i] = res[i].replace("\n", " ")
+    result = {}
+    for i in references_found:
+        definitions_found = re.findall(rf"{re.escape(i)} +([^\[]*)", input)
+        if definitions_found:
+            result[i] = definitions_found[-1][:250]
+            result[i] = " ".join(result[i].split())
+            result[i] = result[i].replace("\n", " ")
 
-    return res
+    return result
 
 
 def generate_json(input: str) -> str:
