@@ -4,7 +4,7 @@ A tool for parsing security certificates.
 
 ## Usage
 
-`src/main.py` parses a text file and outputs a JSON file. It accepts options in the following format `[-h] [--output_file OUTPUT_FILE] input_file`. Option `-h` show help, option `--output_file` specifies the output file and defaults to `output.json` and `input_file` specifies the input file.
+`src/main.py` parses text files and outputs JSON files. It accepts options in the following format `[-h] [--output_folder OUTPUT_FOLDER] input_files [input_files ...]`. Option `-h` shows help, option `--output_folder` specifies the output folder and defaults to the current folder and `input_files [input_files ...]` specifies one or more input files.
 
 ## Bash scripts
 
