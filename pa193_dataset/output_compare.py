@@ -2,6 +2,7 @@
 import sys
 import json
 import math
+import os
 from difflib import SequenceMatcher
 
 def load_file(file):
@@ -146,19 +147,54 @@ def check_bibliography(actual, expected):
     return 20 * score / max_score
 
 
+def check(actual, expected):
+    checks = (check_title, check_versions, check_toc, check_revisions, check_bibliography)
+    scores = [check(actual, expected) for check in checks]
+    return scores
+
+
 def main():
-    actual = load_file(sys.argv[1])
-    expected = load_file(sys.argv[2])
     verbose = len(sys.argv) >= 4 and sys.argv[3] == "-v"
 
-    checks = (check_title, check_versions, check_toc, check_revisions, check_bibliography)
-    points = [check(actual, expected) for check in checks]
+    if os.path.isdir(sys.argv[1]) and os.path.isdir(sys.argv[2]):
+        rows = []
     
-    print(math.ceil(sum(points)))
-    
-    if verbose:
-        print(" ".join(["%3.0f" % p for p in points]))
+        for filename in os.listdir(sys.argv[1]):
+            actual_path = os.path.join(sys.argv[1], filename)
+            expected_path = os.path.join(sys.argv[2], filename)
+            actual = load_file(actual_path)
+            expected = load_file(expected_path)
+            scores = check(actual, expected)
+            rows.append((scores, filename))
         
+        if verbose:
+            print("", "  ".join(["sum", "tit", "ver", "toc", "rev", "bib"]), "name")
+        
+            for scores, filename in sorted(rows, key=lambda x: sum(x[0]), reverse=True):
+                print("%4.0f" % math.ceil(sum(scores)), " ".join(["%4.0f" % score for score in scores]),
+                      filename)
+        
+        print(sum([math.ceil(sum(scores)) for scores, _ in rows]), end="")
+        
+        if verbose:
+            for j in range(len(rows[0][0])):
+                scores = [rows[i][0][j] for i in range(len(rows))]
+                print("", "%4.0f" % sum(scores), end="")
+
+        print()
+        
+    else:
+        actual = load_file(sys.argv[1])
+        expected = load_file(sys.argv[2])
+        scores = check(actual, expected)
+
+        print(math.ceil(sum(scores)), end="")
+        
+        if verbose:
+            print("", " ".join([str(int(s)) for s in scores]))
+
+        print()
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
