@@ -113,12 +113,36 @@ def find_bibliography(input: str) -> Dict[str, str]:
     return result
 
 
+def find_table_of_contents(input_original: str) -> List[List[str]]:
+    # Look at the start and the end of document.
+    input = input_original[:20000] + input_original[-10000:]
+
+    # TOC with dots
+    result = re.findall(r"([A-Z0-9.]+) +([^\.]+) ?\.\.\.\.+ ?([0-9]+)", input)
+
+    # TOC without dots
+    if not result:
+        result = re.findall(r"([0-9.]+) +(.*)     +([0-9]+)", input)
+
+    # Clean up the result
+    for i in range(len(result)):
+        result[i] = list(result[i])
+        for j in range(3):
+            result[i][j] = result[i][j].strip()
+        if result[i][0][-1] == '.':
+            # For some reason there are not dots at the end in the dataset.
+            result[i][0] = result[i][0][:-1]
+        result[i][2] = int(result[i][2])
+
+    return result
+
+
 def generate_json(input: str) -> str:
     return json.dumps(
         {
             "title": find_title(input),
             "versions": find_versions(input),
-            "table_of_contents": [],
+            "table_of_contents": find_table_of_contents(input),
             "revisions": [],
             "bibliography": find_bibliography(input),
             "other": [],
