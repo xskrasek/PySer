@@ -1,6 +1,14 @@
 import json
 import re
+from operator import itemgetter
 from typing import Dict, List
+
+import collections
+import itertools
+
+
+def squash_whitespace(input: str) -> str:
+    return " ".join(input.split()).replace("\n", " ")
 
 
 def deduplicate_list(input: List) -> List:
@@ -34,7 +42,7 @@ def find_title_dirty(input: str) -> str:
 
 def find_title(input: str) -> str:
     title = find_title_dirty(input)
-    title = " ".join(title.split())
+    title = squash_whitespace(title)
     return title
 
 
@@ -107,39 +115,76 @@ def find_bibliography(input: str) -> Dict[str, str]:
         definitions_found = re.findall(rf"{re.escape(i)} +([^\[]*)", input)
         if definitions_found:
             result[i] = definitions_found[-1][:250]
-            result[i] = " ".join(result[i].split())
-            result[i] = result[i].replace("\n", " ")
+            result[i] = squash_whitespace(result[i])
 
     return result
 
 
 def find_table_of_contents(input_original: str) -> List[List[str]]:
     # Look at the start and the end of document.
-    input = input_original[:20000] + input_original[-10000:]
+    start = 0.15
+    end = -start
+    input = input_original[:int(len(input_original) * start)] + \
+            input_original[int(len(input_original) * end):]
 
     # TOC with dots
-    result = re.findall(r"([A-Z0-9.]+) +([^\.]+) ?\.\.\.\.+ ?([0-9]+)", input)
+    result = re.findall(r"(?<!Table )"
+                        r"([A-D1-9][0-9.]*)" # chapter
+                        r" +"
+                        r"([A-Z][^\.]+)" # title
+                        r" ?(?:(?:\.){2,}|(?:\.\s){2,}) ?" # dots
+                        r"([0-9]+)", # page
+                        input)
 
     # TOC without dots
     if not result:
-        result = re.findall(r"([0-9.]+) +(.*)     +([0-9]+)", input)
+        result = re.findall(r"([A-D0-9][0-9.]*)" # chapter
+                            r" +"
+                            r"(.*)" #r"(.*[^\s].*)" # title
+                            r" {5,}"
+                            r"([0-9]+)", # page
+                            input)
 
     # Clean up the result
     for i in range(len(result)):
-        result[i] = list(result[i])
-        for j in range(3):
-            result[i][j] = result[i][j].strip()
-        if result[i][0][-1] == '.':
+        result[i] = [group.strip() for group in result[i]]
+        if result[i][0].endswith("."):
             # For some reason there are not dots at the end in the dataset.
             result[i][0] = result[i][0][:-1]
+        result[i][1] = squash_whitespace(result[i][1])
         result[i][2] = int(result[i][2])
+
+    def sorting_key(toc_entry: List[str]) -> List[int]:
+        def val(toc_id):
+            if toc_id.isdigit():
+                return int(toc_id)
+            else:
+                return ord(toc_id) - ord('A') + 100
+    
+        return [val(id) for id in toc_entry[0].split(".")]
+
+    if any([r[0].isalpha() for r in result]):
+        # worth 4 points
+        splits = [[]]
+
+        for r in result:
+            splits[-1].append(r)
+            if r[0].isalpha():
+                splits.append([])
+
+        splits = [sorted(split, key=sorting_key) for split in splits]
+        result = list(itertools.chain.from_iterable(splits))
+    else:
+        # worth 8 points
+        result = sorted(result, key=sorting_key)
 
     return result
 
 
 def find_revisions(input: str) -> List[Dict[str, str]]:
     # find start
-    iter = re.finditer(r"revision history|version control", input, re.IGNORECASE)
+    iter = re.finditer(r"revision history|version control", input,
+                       re.IGNORECASE)
     start = None
     a = 0
     for start in iter:
@@ -152,7 +197,7 @@ def find_revisions(input: str) -> List[Dict[str, str]]:
     input = input[start.span(0)[1]:]
 
     # find end
-    end = re.search(r"\n\n\n\n", input, re.IGNORECASE)
+    end = re.search(r"\n{4}", input, re.IGNORECASE)
     if end:
         input = input[:end.span(0)[1]]
     else:
@@ -170,6 +215,7 @@ def find_revisions(input: str) -> List[Dict[str, str]]:
 
     return result
 
+
 def generate_json(input: str) -> str:
     return json.dumps(
         {
@@ -180,3 +226,4 @@ def generate_json(input: str) -> str:
             "bibliography": find_bibliography(input),
             "other": [],
         }, indent=4, ensure_ascii=False)
+
