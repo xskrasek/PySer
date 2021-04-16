@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 
 import parser
+import argparse
+import json
 import os
 from typing import List
-
-import argparse
 
 
 def generate_json_file(input_path: str, output_path: str):
     with open(input_path, "r", encoding="utf8") as file:
         input = file.read()
 
-    output = parser.generate_json(input)
+    output = json.dumps(parser.parse(input), indent=4, ensure_ascii=False)
 
     with open(output_path, "w", encoding="utf8") as file:
         file.write(output)
