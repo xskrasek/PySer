@@ -24,7 +24,10 @@ def parse_dirty(input: str) -> str:
 
     # Last resort.
     iter = re.search(r"([^\n]+\n)*", input, re.MULTILINE)
-    return iter.group(0)
+    if iter:
+        return iter.group(0)
+    
+    return ""
 
 
 def parse(input: str) -> str:

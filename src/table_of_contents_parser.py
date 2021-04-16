@@ -44,7 +44,7 @@ def parse_table(input_original: str) -> List[List[str]]:
 
 def sort(result: List[List[str]]):
     def sorting_key(toc_entry: List[str]) -> List[int]:
-        def val(toc_id):
+        def val(toc_id: str) -> int:
             if toc_id.isdigit():
                 return int(toc_id)
             else:
@@ -54,7 +54,7 @@ def sort(result: List[List[str]]):
 
     if any([r[0].isalpha() for r in result]):
         # worth 4 points
-        splits = [[]]
+        splits: List[List[List[str]]] = [[]]
 
         for r in result:
             splits[-1].append(r)
