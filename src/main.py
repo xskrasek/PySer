@@ -5,6 +5,7 @@ import argparse
 import json
 import os
 from typing import List
+import sys
 
 
 def generate_json_file(input_path: str, output_path: str):
@@ -23,7 +24,10 @@ def generate_multiple_json_files(input_files: List[str], output_folder: str):
         basename = os.path.basename(basename)
         output_file = output_folder + "/" + basename + ".json"
 
-        generate_json_file(input_file, output_file)
+        try:
+            generate_json_file(input_file, output_file)
+        except Exception as e:
+            print(f"Skipping file '{input_file}': {e}", file=sys.stderr)
 
 
 def parse_args():
