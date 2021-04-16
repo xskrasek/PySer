@@ -5,7 +5,17 @@ from operator import itemgetter
 from typing import List, Tuple
 
 
-def parse_table(input_original: str) -> List[List[str]]:
+def postprocess_match(match: Tuple[str, str, str]) -> Tuple[str, str, int]:
+    id, title, page_str = tuple(group.strip() for group in match)
+    if id.endswith("."):
+        # For some reason there are not dots at the end in the dataset.
+        id = id[:-1]
+    title = squash_whitespace(title)
+    page = int(page_str)
+    return id, title, page
+
+
+def parse_table(input_original: str) -> List[Tuple[str, str, int]]:
     # Look at the start and the end of document.
     start = 0.15
     end = -start
@@ -13,37 +23,30 @@ def parse_table(input_original: str) -> List[List[str]]:
             input_original[int(len(input_original) * end):]
 
     # TOC with dots
-    result = re.findall(r"(?<!Table )"
-                        r"([A-D1-9][0-9.]*)" # chapter
-                        r" +"
-                        r"([A-Z][^\.]+)" # title
-                        r" ?(?:(?:\.){2,}|(?:\.\s){2,}) ?" # dots
-                        r"([0-9]+)", # page
-                        input)
+    matches = re.findall(r"(?<!Table )"
+                         r"([A-D1-9][0-9.]*)" # chapter
+                         r" +"
+                         r"([A-Z][^\.]+)" # title
+                         r" ?(?:(?:\.){2,}|(?:\.\s){2,}) ?" # dots
+                         r"([0-9]+)", # page
+                         input)
 
     # TOC without dots
-    if not result:
-        result = re.findall(r"([A-D0-9][0-9.]*)" # chapter
-                            r" +"
-                            r"(.*)" #r"(.*[^\s].*)" # title
-                            r" {5,}"
-                            r"([0-9]+)", # page
-                            input)
+    if not matches:
+        matches = re.findall(r"([A-D0-9][0-9.]*)" # chapter
+                             r" +"
+                             r"(.*)" #r"(.*[^\s].*)" # title
+                             r" {5,}"
+                             r"([0-9]+)", # page
+                             input)
 
-    # Clean up the result
-    for i in range(len(result)):
-        result[i] = [group.strip() for group in result[i]]
-        if result[i][0].endswith("."):
-            # For some reason there are not dots at the end in the dataset.
-            result[i][0] = result[i][0][:-1]
-        result[i][1] = squash_whitespace(result[i][1])
-        result[i][2] = int(result[i][2])
-
+    # Postprocess the matches
+    result = list(map(postprocess_match, matches))
     return result
 
 
-def sort(result: List[List[str]]):
-    def sorting_key(toc_entry: List[str]) -> List[int]:
+def sort(result: List[Tuple[str, str, int]]) -> List[Tuple[str, str, int]]:
+    def sorting_key(toc_entry: Tuple[str, str, int]) -> List[int]:
         def val(toc_id: str) -> int:
             if toc_id.isdigit():
                 return int(toc_id)
@@ -54,7 +57,7 @@ def sort(result: List[List[str]]):
 
     if any([r[0].isalpha() for r in result]):
         # worth 4 points
-        splits: List[List[List[str]]] = [[]]
+        splits: List[List[Tuple[str, str, int]]] = [[]]
 
         for r in result:
             splits[-1].append(r)
@@ -70,7 +73,7 @@ def sort(result: List[List[str]]):
     return result
 
 
-def parse(input: str) -> List[List[str]]:
+def parse(input: str) -> List[Tuple[str, str, int]]:
     result = parse_table(input)
     result = sort(result)
     return result
