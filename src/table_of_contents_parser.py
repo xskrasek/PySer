@@ -46,7 +46,8 @@ def find_toc_with_dots(input: str) -> Optional[str]:
     return "\n".join(lines[start:end])
 
 
-def parse_toc_with_dots_multiple_columns(input: str):
+def parse_toc_with_dots_multiple_columns(input: str) \
+-> List[Tuple[str, str, int]]:
     lines = input.split("\n")
     
     matches = []
