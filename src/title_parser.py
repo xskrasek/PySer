@@ -3,6 +3,12 @@ import re
 
 
 def parse_dirty(input: str) -> str:
+    iter = re.search(r"title:?\s+([^\n]*)", input, re.IGNORECASE | re.MULTILINE)
+    if iter:
+        potential_title_count = squash_whitespace(input).count(iter.group(1))
+        if potential_title_count > 5:
+            return iter.group(1)
+
     # Arbitrary limit, title after 1000 characters would be weird.
     input = input[:1000]
 
@@ -23,6 +29,11 @@ def parse_dirty(input: str) -> str:
         if iter:
             return iter.group(0)
 
+    # e.g. 0782V5b_pdf
+    iter = re.search(r"security target[^\n]*(.*)common criteria", input, re.MULTILINE | re.IGNORECASE | re.DOTALL)
+    if iter and len(squash_whitespace(iter.group(1))) > 5:
+        return iter.group(1)
+
     # e.g. 1110V3b_pdf
     iter = re.search(r"\n\n([^\n].+?\n)\n\n", input, re.MULTILINE | re.DOTALL)
     if iter:
@@ -38,6 +49,11 @@ def parse_dirty(input: str) -> str:
 
 def parse(input: str) -> str:
     title = parse_dirty(input)
+
+    index = title.lower().find("security target lite")
+    if index > 0:
+        title = title[:index]
+
     title = squash_whitespace(title)
     return title
 
