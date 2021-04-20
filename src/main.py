@@ -19,6 +19,10 @@ def generate_json_file(input_path: str, output_path: str):
 
 
 def generate_multiple_json_files(input_files: List[str], output_folder: str):
+    if not os.path.isdir(output_folder):
+        print(f"No such directory: '{output_folder}'", file=sys.stderr)
+        return
+
     for input_file in input_files:
         basename = os.path.splitext(input_file)[0]
         basename = os.path.basename(basename)
