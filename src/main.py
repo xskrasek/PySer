@@ -9,8 +9,12 @@ import sys
 
 
 def generate_json_file(input_path: str, output_path: str):
+    max_read = 64 * 1024 * 1024
+
     with open(input_path, "r", encoding="utf8") as file:
-        input = file.read()
+        input = file.read(max_read)
+        if len(input) == max_read:
+            raise MemoryError("File is too large")
 
     output = json.dumps(parser.parse(input), indent=4, ensure_ascii=False)
 
