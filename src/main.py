@@ -30,7 +30,7 @@ def generate_multiple_json_files(input_files: List[str], output_folder: str):
     for input_file in input_files:
         basename = os.path.splitext(input_file)[0]
         basename = os.path.basename(basename)
-        output_file = output_folder + "/" + basename + ".json"
+        output_file = os.path.join(output_folder, basename + ".json")
 
         try:
             generate_json_file(input_file, output_file)
