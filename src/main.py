@@ -67,12 +67,33 @@ def parsed_fields(string: str) -> List[str]:
 
 
 def parse_args():
-    argument_parser = argparse.ArgumentParser()
-    argument_parser.add_argument("input_files", type=str, nargs='+')
+    argument_parser = argparse.ArgumentParser(
+        description="PySer - A regular expression based parser for security "
+                    "certificates.")
+
+    argument_parser.add_argument(
+        "input_files",
+        help="A list of input files in plaintext format.",
+        type=str, nargs='+')
     # TODO: might be a good idea to remove some of those,
     # looks like a possible security hole?
-    argument_parser.add_argument("--output_folder", type=str, default=".")
-    argument_parser.add_argument("--pretty_print", type=parsed_fields, default="")
+    argument_parser.add_argument(
+        "-o", "--output_folder",
+        help="Path to an existing outupt folder, into which "
+             "the correspondingly named list of JSON files will be written.",
+        type=str, default=".")
+    argument_parser.add_argument(
+        "-p", "--pretty_print",
+        help="A comma-separated list of the fields (without whitespace) "
+             "to pretty-print after parsing each file. Allowed values are: " +
+             ", ".join(parsed_fields_long) +
+             " or their corresponding short form: " +
+             ", ".join(parsed_fields_short) +
+             ". The fields are printed in the specified order, "
+             "without duplication.",
+        metavar="FIELD_LIST",
+        type=parsed_fields, default="")
+
     return argument_parser.parse_args()
 
 
