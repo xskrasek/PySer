@@ -10,7 +10,7 @@ RE_TOC_WITH_DOTS = re.compile(
     r"((?:Table|Figure|(?:Fig|Tab)\.?) |[^\s1-9])?"
     r"([A-D1-9][0-9]?(?:\.[0-9]{1,2})*)\.?" # section number
     r" {1,20}"
-    r"([A-Z](?:[^\.](?! {6,})|\.(?! ?\.))+)" # title
+    r"([A-Z](?:[^\.](?! {6,})|\.(?! ?\.)){1,80})" # title
     r" ?(?:(?:\.){2,}|(?:\.\s){2,}) ?" # dots
     r"([0-9]+)") # page number
 
@@ -19,7 +19,7 @@ RE_TOC_WITHOUT_DOTS = re.compile(
     r"((?:Table|Figure|(?:Fig|Tab)\.?) |[^\s1-9])?"
     r"([A-D1-9][0-9]?(?:\.[0-9]{1,2})*)\.?" # section number
     r" {1,20}"
-    r"(.*)" #r"(.*[^\s].*)" # title
+    r"(.{1,80})" # title
     r" {5,}"
     r"([0-9]+)") # page number
 
@@ -98,6 +98,7 @@ def postprocess_match(match: Tuple[str, str, str, str]) \
 
     id, title, page_str = tuple(group.strip() for group in match[1:])
     title = squash_whitespace(title)
+    title = re.sub(r"([A-Za-z])-\s", r"\1", title)
     page = int(page_str)
     return id, title, page
 
@@ -139,7 +140,6 @@ def parse(input: str) -> List[Tuple[str, str, int]]:
     dotted_toc = find_toc_with_dots(input)
 
     if dotted_toc is not None:
-        result = parse_toc_with_dots(dotted_toc)
         result = parse_toc_with_dots_multiple_columns(dotted_toc)
     else:
         # Look at the start and the end of the document
