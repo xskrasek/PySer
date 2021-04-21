@@ -113,9 +113,11 @@ def sort(result: List[Tuple[str, str, int]]) -> List[Tuple[str, str, int]]:
         def val(toc_id: str) -> int:
             if toc_id.isdigit():
                 return int(toc_id)
-            else:
+            elif toc_id.isalpha():
                 return ord(toc_id) - ord('A') + 100
-    
+            else:
+                return 1000000
+
         return [val(id) for id in toc_entry[0].split(".")]
 
     if any([r[0].isalpha() for r in result]):

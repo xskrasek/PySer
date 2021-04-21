@@ -13,8 +13,11 @@ from typing import List
 
 def generate_json_file(sequence_number: int, input_path: str,
                        output_path: str, pretty_printed_fields: List[str]):
+    max_read = 64 * 1024 * 1024
     with open(input_path, "r", encoding="utf8") as file:
-        input = file.read()
+        input = file.read(max_read)
+        if len(input) == max_read:
+            raise MemoryError("File is too large")
 
     result = parser.parse(input)
     output = json.dumps(result, indent=4, ensure_ascii=False)
@@ -32,10 +35,13 @@ def generate_json_file(sequence_number: int, input_path: str,
 
 def generate_multiple_json_files(input_files: List[str], output_folder: str,
                                  pretty_printed_fields: List[str]):
+    if not os.path.isdir(output_folder):
+        print(f"No such directory: '{output_folder}'", file=sys.stderr)
+        return
     for i, input_file in enumerate(input_files, start=1):
         basename = os.path.splitext(input_file)[0]
         basename = os.path.basename(basename)
-        output_file = output_folder + "/" + basename + ".json"
+        output_file = os.path.join(output_folder, basename + ".json")
 
         try:
             generate_json_file(i, input_file, output_file, pretty_printed_fields)
@@ -75,8 +81,6 @@ def parse_args():
         "input_files",
         help="A list of input files in plaintext format.",
         type=str, nargs='+')
-    # TODO: might be a good idea to remove some of those,
-    # looks like a possible security hole?
     argument_parser.add_argument(
         "-o", "--output_folder",
         help="Path to an existing outupt folder, into which "
@@ -93,7 +97,6 @@ def parse_args():
              "without duplication.",
         metavar="FIELD_LIST",
         type=parsed_fields, default="")
-
     return argument_parser.parse_args()
 
 

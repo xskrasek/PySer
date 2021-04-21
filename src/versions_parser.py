@@ -24,7 +24,7 @@ def parse_sha(input: str) -> List[str]:
 def parse_des(input: str) -> List[str]:
     found = re.findall(r"3des", input, re.IGNORECASE)
     found += re.findall(r"des3", input, re.IGNORECASE)
-    found += re.findall(r"triple-des", input, re.IGNORECASE)
+    found += re.findall(r"triple[- ]des", input, re.IGNORECASE)
     found += re.findall(r"tdes", input, re.IGNORECASE)
 
     return deduplicate_list(found)
@@ -51,13 +51,13 @@ def parse_ecc(input: str) -> List[str]:
 
 
 def parse_global_platform(input: str) -> List[str]:
-    found = re.findall(r"global platform (?:[0-9]\.)*[0-9]", input, re.IGNORECASE)
+    found = re.findall(r"global ?platform (?:[0-9]\.)*[0-9]", input, re.IGNORECASE)
 
     return deduplicate_list(found)
 
 
 def parse_java_card(input: str) -> List[str]:
-    found = re.findall(r"java card (?:[0-9]\.)*[0-9]", input, re.IGNORECASE)
+    found = re.findall(r"java ?card (?:[0-9]\.)*[0-9]", input, re.IGNORECASE)
     
     return deduplicate_list(found)
 
