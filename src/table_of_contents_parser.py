@@ -8,20 +8,20 @@ from typing import List, Tuple, Optional
 RE_TOC_WITH_DOTS = re.compile(
     # manual negative lookbehind
     r"((?:Table|Figure|(?:Fig|Tab)\.?) |[^\s1-9])?"
-    r"([A-D1-9][0-9]?(?:\.[0-9]{1,2})*)\.?" # section number
+    r"([A-D1-9][0-9]?(?:\.[0-9]{1,2})*)\.?"  # section number
     r" {1,20}"
-    r"([A-Z](?:[^\.](?! {6,})|\.(?! ?\.)){1,80})" # title
-    r" ?(?:(?:\.){2,}|(?:\.\s){2,}) ?" # dots
-    r"([0-9]+)") # page number
+    r"([A-Z](?:[^\.](?! {6,})|\.(?! ?\.)){1,80})"  # title
+    r" ?(?:(?:\.){2,}|(?:\.\s){2,}) ?"  # dots
+    r"([0-9]+)")  # page number
 
 RE_TOC_WITHOUT_DOTS = re.compile(
     # manual negative lookbehind
     r"((?:Table|Figure|(?:Fig|Tab)\.?) |[^\s1-9])?"
-    r"([A-D1-9][0-9]?(?:\.[0-9]{1,2})*)\.?" # section number
+    r"([A-D1-9][0-9]?(?:\.[0-9]{1,2})*)\.?"  # section number
     r" {1,20}"
-    r"(.{1,80})" # title
+    r"(.{1,80})"  # title
     r" {5,}"
-    r"([0-9]+)") # page number
+    r"([0-9]+)")  # page number
 
 
 def find_toc_with_dots(input: str) -> Optional[str]:
@@ -47,9 +47,9 @@ def find_toc_with_dots(input: str) -> Optional[str]:
 
 
 def parse_toc_with_dots_multiple_columns(input: str) \
--> List[Tuple[str, str, int]]:
+        -> List[Tuple[str, str, int]]:
     lines = input.split("\n")
-    
+
     matches = []
     left_column = ""
     right_column = ""
@@ -92,7 +92,7 @@ def parse_toc_without_dots(input: str) -> List[Tuple[str, str, int]]:
 
 
 def postprocess_match(match: Tuple[str, str, str, str]) \
--> Optional[Tuple[str, str, int]]:
+        -> Optional[Tuple[str, str, int]]:
     if match[0] is not None and len(match[0]) != 0:
         return None
 
@@ -104,7 +104,7 @@ def postprocess_match(match: Tuple[str, str, str, str]) \
 
 
 def postprocess_matches(matches: List[Tuple[str, str, str, str]]) \
--> List[Tuple[str, str, int]]:
+        -> List[Tuple[str, str, int]]:
     return list([r for r in map(postprocess_match, matches) if r is not None])
 
 
@@ -152,4 +152,3 @@ def parse(input: str) -> List[Tuple[str, str, int]]:
 
     result = sort(result)
     return result
-

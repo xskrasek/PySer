@@ -26,7 +26,7 @@ def month_to_number(input: str) -> str:
 def clean_date(input: str) -> str:
     if not input:
         return ""
-    
+
     splitted = re.split("\.|-", input)
     if len(splitted) != 3:
         return input
@@ -62,12 +62,20 @@ def parse_general(input: str, regex: str, ver_index: int, date_index: int) -> Li
     return final_results
 
 
+REVISION_EX = r"v?([0-9.]+)"
+DATE_EX = r"([0-9-A-Za-z-\.]+)"
+
+
 def parse_rev_date_desc(input: str) -> List[Dict[str, str]]:
-    return parse_general(input, r"\s+v?([0-9.]+)\s+([0-9-A-Za-z-\.]+)?[\s:]\s+(.*)", 0, 1)
+    return parse_general(input,
+                         rf"\s+{REVISION_EX}\s+{DATE_EX}?[\s:]\s+(.*)",
+                         0, 1)
 
 
 def parse_date_ver_desc(input: str) -> List[Dict[str, str]]:
-    return parse_general(input, r"\s+v?([0-9-A-Za-z-\.]+)?\s+([0-9.]+)[\s:]\s+(.*)", 1, 0)
+    return parse_general(input,
+                         rf"\s+{DATE_EX}?\s+{REVISION_EX}[\s:]\s+(.*)",
+                         1, 0)
 
 
 def parse(input: str) -> List[Dict[str, str]]:
@@ -85,7 +93,8 @@ def parse(input: str) -> List[Dict[str, str]]:
         return parse_rev_date_desc(input[found.span(0)[1]:])
 
     # final attempt, filtering out capitalization that could be used in normal text
-    iter = re.finditer(r"REVISION HISTORY|Revision [Hh]istory|VERSION CONTROL|Version [Cc]ontrol", input)
+    iter = re.finditer(r"REVISION HISTORY|Revision [Hh]istory"
+                       r"|VERSION CONTROL|Version [Cc]ontrol", input)
     iter_list = list(iter)
     if iter_list:
         # first mention probably in toc, so take the second one, if there is one

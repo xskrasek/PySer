@@ -13,4 +13,3 @@ def squash_whitespace(input: str) -> str:
 
 def deduplicate_list(input: List) -> List:
     return list(set(input))
-

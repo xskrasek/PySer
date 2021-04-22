@@ -16,4 +16,3 @@ def parse(input: str) -> Dict[str, str]:
             result[i] = squash_whitespace(result[i])
 
     return result
-

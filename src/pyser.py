@@ -21,11 +21,12 @@ def generate_json_file(sequence_number: int, input_path: str,
 
     result = parser.parse(input)
     output = json.dumps(result, indent=4, ensure_ascii=False)
-    
+
     if len(pretty_printed_fields) != 0:
         if sequence_number != 1:
             print(end="\n" * 2)
-        print(f"{sequence_number}.", os.path.splitext(os.path.basename(input_path))[0])
+        print(f"{sequence_number}.",
+              os.path.splitext(os.path.basename(input_path))[0])
 
     pretty_printer.pretty_print(result, pretty_printed_fields)
 
@@ -44,7 +45,8 @@ def generate_multiple_json_files(input_files: List[str], output_folder: str,
         output_file = os.path.join(output_folder, basename + ".json")
 
         try:
-            generate_json_file(i, input_file, output_file, pretty_printed_fields)
+            generate_json_file(i, input_file, output_file,
+                               pretty_printed_fields)
         except Exception as e:
             print(f"Skipping file '{input_file}': {e}", file=sys.stderr)
 
@@ -56,14 +58,14 @@ def parsed_fields(string: str) -> List[str]:
     fields = string.split(",")
     fields = list(itertools.chain.from_iterable(
         parsed_fields_long if f == "all" else [f] for f in fields))
-    
+
     for i in range(len(fields)):
         try:
             fields[i] = \
                 parsed_fields_long[parsed_fields_short.index(fields[i])]
         except ValueError:
             pass
-    
+
     if any(field not in parsed_fields_long for field in fields):
         raise argparse.ArgumentTypeError(
             f"'{string}' is not a valid fields option")
@@ -102,4 +104,6 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    generate_multiple_json_files(args.input_files, args.output_folder, args.pretty_print)
+    generate_multiple_json_files(args.input_files,
+                                 args.output_folder,
+                                 args.pretty_print)

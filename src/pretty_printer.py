@@ -25,7 +25,7 @@ def pretty_print_title(data: str) -> None:
 
 def pretty_print_versions(data: Dict[str, List[str]]) -> None:
     labels_size = max(len(pretty_version_key(key)) for key in data.keys())
-    
+
     for key, versions in sorted(data.items()):
         print(pretty_version_key(key).rjust(labels_size) + ":",
               ", ".join(versions),
@@ -36,7 +36,7 @@ def pretty_print_table_of_contents(data: List[Tuple[str, str, int]]) -> None:
     col1_size = max(len(x[0]) for x in data)
     col2_size = max(len(x[1]) for x in data) + 4
     max_page_size = max(len(str(x[2])) for x in data)
-    
+
     for id, title, page in data:
         title += " "
         print(id.ljust(col1_size) + " " * 3,
@@ -51,12 +51,12 @@ def pretty_print_revisions(data: List[Dict[str, str]]) -> None:
     col1_size = max([len(x["version"]) for x in data] + [len(col1_title)])
     col2_size = max([len(x["date"]) for x in data] + [len(col2_title)])
     col3_size = max([len(x["description"]) for x in data] + [len(col3_title)])
-    
+
     print(col1_title.rjust(col1_size),
           col2_title.ljust(col2_size),
           col3_title.ljust(col3_size),
           sep=" " * 4)
-    
+
     for entry in data:
         print(entry["version"].rjust(col1_size),
               entry["date"].ljust(col2_size),
@@ -75,7 +75,7 @@ def pretty_print_bibliography(data: Dict[str, str]) -> None:
             return key_value[0]
 
     labels_size = max(len(key) for key in data.keys())
-    
+
     for key, text in sorted(data.items(), key=sorting_key):
         print(key.ljust(labels_size), text, sep=" " * 4)
 
@@ -91,10 +91,9 @@ def pretty_print(data, fields: List[str]) -> None:
 
     for i, field in enumerate(fields):
         pretty_printing_function = pretty_printing_functions[field]
-        
+
         if i != 0:
             print()
         print(pretty_field_name(field) + ":")
-    
-        pretty_printing_function()
 
+        pretty_printing_function()
