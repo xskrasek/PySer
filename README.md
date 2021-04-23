@@ -4,23 +4,27 @@ A regular expression based parser for security certificates.
 
 ## Examples of Usage
 
-### Parse a single file without pretty printing
+### Parse a single file
 
-    python3 src/pyser.py pa193_dataset/dataset/1102a_pdf.txt --o output
+The resulting file are then located in the current working directory.
 
-### Parse the whole dataset without pretty printing
+    ./src/pyser.py pa193_dataset/dataset/1102a_pdf.txt
 
-    python3 src/pyser.py pa193_dataset/dataset/*.txt --o output
+### Parse the whole dataset
 
-### Parse a single file with pretty printing of title and revisions
+Can also specify the output folder to not clutter the current working directory.
 
-    python3 src/pyser.py pa193_dataset/dataset/1102a_pdf.txt --o output -p title,revisions
+    ./src/pyser.py pa193_dataset/dataset/*.txt -o output
+
+### Parse a single file with pretty-printing of title and revisions
+
+    ./src/pyser.py pa193_dataset/dataset/1102a_pdf.txt -o output -p title,revisions
     
-### Parse a single file with pretty printing of title and revisions (short form)
+### Parse a single file with pretty-printing of title and revisions (short form)
     
-    python3 src/pyser.py pa193_dataset/dataset/1102a_pdf.txt --o output -p tit,rev
+    ./src/pyser.py pa193_dataset/dataset/1102a_pdf.txt -o output -p tit,rev
 
-See `src/pyser.py --help` for a complete overview.
+See `./src/pyser.py --help` for a complete overview.
 
 ## Bash Scripts
 
