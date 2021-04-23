@@ -1,14 +1,29 @@
 #!/usr/bin/env python3
 
-import parser
 import pretty_printer
 from common import parsed_fields_long, parsed_fields_short
+import title_parser
+import versions_parser
+import table_of_contents_parser
+import revisions_parser
+import bibliography_parser
 import argparse
 import itertools
 import json
 import os
 import sys
 from typing import List
+
+
+def parse(input: str):
+    return {
+        "title": title_parser.parse(input),
+        "versions": versions_parser.parse(input),
+        "table_of_contents": table_of_contents_parser.parse(input),
+        "revisions": revisions_parser.parse(input),
+        "bibliography": bibliography_parser.parse(input),
+        "other": [],
+    }
 
 
 def generate_json_file(sequence_number: int, input_path: str,
@@ -19,7 +34,7 @@ def generate_json_file(sequence_number: int, input_path: str,
         if len(input) == max_read:
             raise MemoryError("File is too large")
 
-    result = parser.parse(input)
+    result = parse(input)
     output = json.dumps(result, indent=4, ensure_ascii=False)
 
     if len(pretty_printed_fields) != 0:
