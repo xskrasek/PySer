@@ -23,11 +23,11 @@ RE_TOC_WITHOUT_DOTS = re.compile(
     r"([0-9]+)")  # page number
 
 
-def find_toc_with_dots(input: str) -> Optional[str]:
+def find_toc_with_dots(plain_text: str) -> Optional[str]:
     def is_dotted_line(line: str) -> bool:
         return len(line) >= 20 and line.count('.') >= len(line) * 0.1
 
-    lines = input.split('\n')
+    lines = plain_text.split('\n')
     dot_lines = [i for i in range(len(lines)) if is_dotted_line(lines[i])]
 
     if len(dot_lines) == 0:
@@ -45,9 +45,9 @@ def find_toc_with_dots(input: str) -> Optional[str]:
     return "\n".join(lines[start:end])
 
 
-def parse_toc_with_dots_multiple_columns(input: str) \
+def parse_toc_with_dots_multiple_columns(plain_text: str) \
         -> List[Tuple[str, str, int]]:
-    lines = input.split("\n")
+    lines = plain_text.split("\n")
 
     matches = []
     left_column = ""
@@ -80,13 +80,13 @@ def parse_toc_with_dots_multiple_columns(input: str) \
     return result
 
 
-def parse_toc_with_dots(input: str) -> List[Tuple[str, str, int]]:
-    matches = RE_TOC_WITH_DOTS.findall(input, re.MULTILINE)
+def parse_toc_with_dots(plain_text: str) -> List[Tuple[str, str, int]]:
+    matches = RE_TOC_WITH_DOTS.findall(plain_text, re.MULTILINE)
     return postprocess_matches(matches) if matches is not None else []
 
 
-def parse_toc_without_dots(input: str) -> List[Tuple[str, str, int]]:
-    matches = RE_TOC_WITHOUT_DOTS.findall(input)
+def parse_toc_without_dots(plain_text: str) -> List[Tuple[str, str, int]]:
+    matches = RE_TOC_WITHOUT_DOTS.findall(plain_text)
     return postprocess_matches(matches) if matches is not None else []
 
 
@@ -137,8 +137,8 @@ def sort(result: List[Tuple[str, str, int]]) -> List[Tuple[str, str, int]]:
     return result
 
 
-def parse(input: str) -> List[Tuple[str, str, int]]:
-    dotted_toc = find_toc_with_dots(input)
+def parse(plain_text: str) -> List[Tuple[str, str, int]]:
+    dotted_toc = find_toc_with_dots(plain_text)
 
     if dotted_toc is not None:
         result = parse_toc_with_dots_multiple_columns(dotted_toc)
@@ -146,8 +146,8 @@ def parse(input: str) -> List[Tuple[str, str, int]]:
         # Look at the start and the end of the document
         start = 0.15
         end = -start
-        result = parse_toc_without_dots(input[:int(len(input) * start)])
-        result += parse_toc_without_dots(input[int(len(input) * end):])
+        result = parse_toc_without_dots(plain_text[:int(len(plain_text) * start)])
+        result += parse_toc_without_dots(plain_text[int(len(plain_text) * end):])
 
     result = sort(result)
     return result
