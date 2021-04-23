@@ -1,4 +1,3 @@
-from common import parsed_fields_long, parsed_fields_short
 from functools import partial
 import re
 from typing import Dict, List, Tuple, Union

@@ -1,7 +1,6 @@
 from common import squash_whitespace
 import re
 import itertools
-from operator import itemgetter
 from typing import List, Tuple, Optional
 
 

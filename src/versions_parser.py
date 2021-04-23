@@ -1,4 +1,4 @@
-from common import deduplicate_list, squash_whitespace
+from common import deduplicate_list
 import re
 from typing import Dict, List
 
