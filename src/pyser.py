@@ -29,6 +29,7 @@ def parse(plain_text: str):
 def generate_json_file(sequence_number: int, input_path: str,
                        output_path: str, pretty_printed_fields: List[str]):
     max_read = 64 * 1024 * 1024
+
     with open(input_path, "r", encoding="utf8") as file:
         plain_text = file.read(max_read)
         if len(plain_text) == max_read:
@@ -54,6 +55,7 @@ def generate_multiple_json_files(input_files: List[str], output_folder: str,
     if not os.path.isdir(output_folder):
         print(f"No such directory: '{output_folder}'", file=sys.stderr)
         return
+
     for i, input_file in enumerate(input_files, start=1):
         basename = os.path.splitext(input_file)[0]
         basename = os.path.basename(basename)
