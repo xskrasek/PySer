@@ -1,4 +1,4 @@
-from common import deduplicate_list
+from common import deduplicate_list, squash_whitespace
 import re
 from typing import Dict, List
 
@@ -14,10 +14,12 @@ def parse_sha(plain_text: str) -> List[str]:
 
     plain_text = plain_text.replace(" ", "")
     found = re.findall(
-        rf"SHA[-_ ]?(?:{versions})(?:[-/_ ](?:{versions}))?",
-        plain_text
+        rf"SHA[-_ ]?\n?(?:{versions})(?:[-/_ ](?:{versions}))?",
+        plain_text, re.MULTILINE
     )
 
+    for i in range(len(found)):
+        found[i] = squash_whitespace(found[i])
     return deduplicate_list(found)
 
 
