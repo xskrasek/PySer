@@ -95,4 +95,7 @@ def pretty_print(data, fields: List[str]) -> None:
             print()
         print(pretty_field_name(field) + ":")
 
-        pretty_printing_function()
+        if data[field]:
+            pretty_printing_function()
+        else:
+            print("Not found.")
