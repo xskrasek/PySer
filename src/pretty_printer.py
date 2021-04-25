@@ -1,4 +1,3 @@
-from common import parsed_fields_long, parsed_fields_short
 from functools import partial
 import re
 from typing import Dict, List, Tuple, Union
@@ -13,10 +12,10 @@ def pretty_field_name(field: str) -> str:
 def pretty_version_key(key: str) -> str:
     if len(key) == 3:
         return key.upper()
-    else:
-        splits = key.split("_")
-        splits = [split.title() for split in splits]
-        return "".join(splits)
+        
+    splits = key.split("_")
+    splits = [split.title() for split in splits]
+    return "".join(splits)
 
 
 def pretty_print_title(data: str) -> None:

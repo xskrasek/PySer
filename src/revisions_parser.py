@@ -2,7 +2,7 @@ import re
 from typing import Dict, List
 
 
-def month_to_number(input: str) -> str:
+def month_to_number(date: str) -> str:
     values = {
         "jan": "01",
         "feb": "02",
@@ -17,19 +17,19 @@ def month_to_number(input: str) -> str:
         "nov": "11",
         "dec": "12",
     }
-    form = input[:3].lower()
+    form = date[:3].lower()
     if form in values:
         return values[form]
-    return input
+    return date
 
 
-def clean_date(input: str) -> str:
-    if not input:
+def clean_date(date: str) -> str:
+    if not date:
         return ""
 
-    splitted = re.split("\.|-", input)
+    splitted = re.split("\.|-", date)
     if len(splitted) != 3:
-        return input
+        return date
 
     # swap year and day
     if int(splitted[0]) < 1000:
@@ -41,11 +41,12 @@ def clean_date(input: str) -> str:
     return "-".join(splitted)
 
 
-def parse_general(input: str, regex: str, ver_index: int, date_index: int) -> List[Dict[str, str]]:
-    end = re.search(r"\n{4}", input, re.IGNORECASE)
-    input = input[:end.span(0)[1]] if end else input[:5000]
+def parse_revision(entry: str, regex: str, ver_index: int, date_index: int) \
+        -> List[Dict[str, str]]:
+    end = re.search(r"\n{4}", entry, re.IGNORECASE)
+    entry = entry[:end.span(0)[1]] if end else entry[:5000]
 
-    results = re.findall(regex, input)
+    results = re.findall(regex, entry)
 
     final_results = []
     for result in results:
@@ -66,35 +67,35 @@ REVISION_EX = r"v?([0-9.]+)"
 DATE_EX = r"([0-9-A-Za-z-\.]+)"
 
 
-def parse_rev_date_desc(input: str) -> List[Dict[str, str]]:
-    return parse_general(input,
+def parse_ver_date_desc(entry: str) -> List[Dict[str, str]]:
+    return parse_revision(entry,
                          rf"\s+{REVISION_EX}\s+{DATE_EX}?[\s:]\s+(.*)",
                          0, 1)
 
 
-def parse_date_ver_desc(input: str) -> List[Dict[str, str]]:
-    return parse_general(input,
+def parse_date_ver_desc(entry: str) -> List[Dict[str, str]]:
+    return parse_revision(entry,
                          rf"\s+{DATE_EX}?\s+{REVISION_EX}[\s:]\s+(.*)",
                          1, 0)
 
 
-def parse(input: str) -> List[Dict[str, str]]:
+def parse(plain_text: str) -> List[Dict[str, str]]:
     found = re.search(r"^\w*rev\w*\s+date\s+.*description",
-                      input, re.IGNORECASE | re.MULTILINE)
+                      plain_text, re.IGNORECASE | re.MULTILINE)
     if found:
-        return parse_rev_date_desc(input[found.span(0)[1]:])
+        return parse_ver_date_desc(plain_text[found.span(0)[1]:])
 
-    found = re.search(r"date\s+ver\w*\s+.*description", input, re.IGNORECASE)
+    found = re.search(r"date\s+ver\w*\s+.*description", plain_text, re.IGNORECASE)
     if found:
-        return parse_date_ver_desc(input[found.span(0)[1]:])
+        return parse_date_ver_desc(plain_text[found.span(0)[1]:])
 
-    found = re.search(r"version\s\s+description", input, re.IGNORECASE)
+    found = re.search(r"version\s\s+description", plain_text, re.IGNORECASE)
     if found:
-        return parse_rev_date_desc(input[found.span(0)[1]:])
+        return parse_ver_date_desc(plain_text[found.span(0)[1]:])
 
     # final attempt, filtering out capitalization that could be used in normal text
     iter = re.finditer(r"REVISION HISTORY|Revision [Hh]istory"
-                       r"|VERSION CONTROL|Version [Cc]ontrol", input)
+                       r"|VERSION CONTROL|Version [Cc]ontrol", plain_text)
     iter_list = list(iter)
     if iter_list:
         # first mention probably in toc, so take the second one, if there is one
@@ -103,6 +104,6 @@ def parse(input: str) -> List[Dict[str, str]]:
         else:
             start = iter_list[1]
 
-        return parse_rev_date_desc(input[start.span(0)[1]:])
+        return parse_ver_date_desc(plain_text[start.span(0)[1]:])
 
     return []

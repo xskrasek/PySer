@@ -7,9 +7,11 @@ parsed_fields_long = [
 parsed_fields_short = ["tit", "ver", "toc", "rev", "bib"]
 
 
-def squash_whitespace(input: str) -> str:
-    return " ".join(input.split()).replace("\n", " ")
+def squash_whitespace(plain_text: str) -> str:
+    replaced_dash_newline = plain_text.replace("-\n", "-")
+    replaced_all_newlines = " ".join(replaced_dash_newline.split())
+    return replaced_all_newlines
 
 
-def deduplicate_list(input: List) -> List:
-    return list(set(input))
+def deduplicate_list(plain_text: List) -> List:
+    return list(set(plain_text))
