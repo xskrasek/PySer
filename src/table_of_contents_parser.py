@@ -24,6 +24,11 @@ RE_TOC_WITHOUT_DOTS = re.compile(
 
 
 def find_toc_with_dots(plain_text: str) -> Optional[str]:
+    """
+    Produce a substring where the dotted table of contents is located,
+    None if not found.
+    """
+
     def is_dotted_line(line: str) -> bool:
         return len(line) >= 20 and line.count('.') >= len(line) * 0.1
 
@@ -108,6 +113,11 @@ def postprocess_matches(matches: List[Tuple[str, str, str, str]]) \
 
 
 def sort(result: List[Tuple[str, str, int]]) -> List[Tuple[str, str, int]]:
+    """
+    Sort the list of entries intelligently, by taking into account the order
+    of their finding, to some degree.
+    """
+
     def sorting_key(toc_entry: Tuple[str, str, int]) -> List[int]:
         def val(toc_id: str) -> int:
             if toc_id.isdigit():

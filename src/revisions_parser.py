@@ -3,6 +3,11 @@ from typing import Dict, List
 
 
 def month_to_number(date: str) -> str:
+    """
+    Convert a string prefixed with a month name into the corresponding month
+    number.
+    """
+
     values = {
         "jan": "01",
         "feb": "02",
@@ -24,6 +29,11 @@ def month_to_number(date: str) -> str:
 
 
 def clean_date(date: str) -> str:
+    """
+    Convert a numeric date string into the YYYY-MM-DD format, if possible.
+    Otherwise return the original string.
+    """
+
     if not date:
         return ""
 
@@ -68,12 +78,16 @@ DATE_EX = r"([0-9-A-Za-z-\.]+)"
 
 
 def parse_ver_date_desc(entry: str) -> List[Dict[str, str]]:
+    """Parse the case with version identifier before the date."""
+
     return parse_revision(entry,
                          rf"\s+{REVISION_EX}\s+{DATE_EX}?[\s:]\s+(.*)",
                          0, 1)
 
 
 def parse_date_ver_desc(entry: str) -> List[Dict[str, str]]:
+    """Parse the case with version identifier after the date."""
+
     return parse_revision(entry,
                          rf"\s+{DATE_EX}?\s+{REVISION_EX}[\s:]\s+(.*)",
                          1, 0)

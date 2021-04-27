@@ -3,6 +3,11 @@ import re
 
 
 def parse_dirty(plain_text: str) -> str:
+    """
+    Parse the title with potentially unsquashed whitespace and trailing
+    garbage.
+    """
+
     iter = re.search(r"title:?\s+([^\n]*)",
                      plain_text, re.IGNORECASE | re.MULTILINE)
     if iter:
