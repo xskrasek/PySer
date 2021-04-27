@@ -16,6 +16,11 @@ from typing import List
 
 
 def parse(plain_text: str):
+    """
+    Parse the plaintext contents of a single document into
+    a JSON-corresponding dictionary.
+    """
+
     return {
         "title": title_parser.parse(plain_text),
         "versions": versions_parser.parse(plain_text),
@@ -28,6 +33,11 @@ def parse(plain_text: str):
 
 def generate_json_file(sequence_number: int, input_path: str,
                        output_path: str, pretty_printed_fields: List[str]):
+    """
+    Perform parsing of a single document and serialization of the resultant
+    JSON, with optional pretty-printing.
+    """
+
     max_read = 64 * 1024 * 1024
 
     with open(input_path, "r", encoding="utf8") as file:
@@ -52,6 +62,11 @@ def generate_json_file(sequence_number: int, input_path: str,
 
 def generate_multiple_json_files(input_files: List[str], output_folder: str,
                                  pretty_printed_fields: List[str]):
+    """
+    Perform parsing and results serialization of multiple documents,
+    sequentially.
+    """
+
     if not os.path.isdir(output_folder):
         print(f"No such directory: '{output_folder}'", file=sys.stderr)
         return
@@ -69,6 +84,11 @@ def generate_multiple_json_files(input_files: List[str], output_folder: str,
 
 
 def parsed_fields(string: str) -> List[str]:
+    """
+    Parse the comma-separated list of fields, taking only the first occurence
+    of each option.
+    """
+
     if len(string) == 0:
         return []
 
@@ -92,6 +112,8 @@ def parsed_fields(string: str) -> List[str]:
 
 
 def parse_args():
+    """Parse the command-line arguments."""
+
     argument_parser = argparse.ArgumentParser(
         description="PySer - A regular expression based parser for security "
                     "certificates.")

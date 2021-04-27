@@ -4,12 +4,19 @@ from typing import Dict, List, Tuple, Union
 
 
 def pretty_field_name(field: str) -> str:
+    """Translate a CLI (snake_case) field identifier to its pretty form."""
+
     words = field.split("_")
     words = [word.title() if word != "of" else word for word in words]
     return " ".join(words)
 
 
 def pretty_version_key(key: str) -> str:
+    """
+    Translate a version key identifier (corresponding to JSON) to its pretty
+    form.
+    """
+
     if len(key) == 3:
         return key.upper()
         
